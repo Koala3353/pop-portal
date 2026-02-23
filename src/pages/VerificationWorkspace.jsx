@@ -3,7 +3,7 @@ import { UploadCloud, FileImage, ShieldAlert, BadgeCheck, Loader2 } from 'lucide
 import axios from 'axios'
 import clsx from 'clsx'
 
-const API_BASE_URL = 'https://pop-mr3f5gr9i-keenes-projects-d1636aaf.vercel.app'
+const API_BASE_URL = 'https://pop-api-mocha.vercel.app'
 
 export default function VerificationWorkspace() {
     const [currentStep, setCurrentStep] = useState(1)
