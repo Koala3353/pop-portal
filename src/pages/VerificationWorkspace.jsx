@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { UploadCloud, FileImage, ShieldAlert, BadgeCheck, Loader2 } from 'lucide-react'
+import { UploadCloud, FileImage, ShieldAlert, BadgeCheck, Loader2, Download } from 'lucide-react'
 import axios from 'axios'
 import clsx from 'clsx'
 
@@ -10,6 +10,7 @@ export default function VerificationWorkspace() {
 
     // Step 1 State
     const [receiptFiles, setReceiptFiles] = useState([])
+    const [isDraggingReceipts, setIsDraggingReceipts] = useState(false)
 
     // Step 2 & 3 State
     const [parsedResults, setParsedResults] = useState(null)
@@ -18,20 +19,25 @@ export default function VerificationWorkspace() {
 
     // Step 4 State
     const [historyFile, setHistoryFile] = useState(null)
+    const [isDraggingHistory, setIsDraggingHistory] = useState(false)
     const [isVerifying, setIsVerifying] = useState(false)
     const [verificationResults, setVerificationResults] = useState(null)
     const [verificationError, setVerificationError] = useState(null) // New error state
+    const [filterType, setFilterType] = useState('all') // 'all', 'matched', 'mismatch', 'not_found'
 
     const handleReceiptsUpload = (e) => {
-        const files = Array.from(e.target.files)
-        setReceiptFiles(prev => [...prev, ...files])
+        const files = Array.from(e.target.files || e.dataTransfer.files).filter(file => file.type.startsWith('image/'))
+        if (files.length > 0) setReceiptFiles(prev => [...prev, ...files])
+        setIsDraggingReceipts(false)
     }
 
     const handleHistoryUpload = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            setHistoryFile(e.target.files[0])
+        const files = e.target.files || e.dataTransfer.files
+        if (files && files[0]) {
+            setHistoryFile(files[0])
             setVerificationError(null) // Clear error on new file selection
         }
+        setIsDraggingHistory(false)
     }
 
     const parseReceipts = async () => {
@@ -128,6 +134,36 @@ export default function VerificationWorkspace() {
         }
     }
 
+    const downloadCSV = () => {
+        if (!verificationResults?.results) return
+        const headers = ["Filename", "Receipt Amount", "Receipt Time", "Receipt Ref", "Verdict", "Details", "History Amount", "History Time", "History Ref"]
+        const rows = [headers.join(",")]
+
+        verificationResults.results.forEach(r => {
+            const row = [
+                `"${r.filename || ''}"`,
+                `"${r.receipt?.amount || ''}"`,
+                `"${r.receipt?.time || ''}"`,
+                `"${r.receipt?.ref || ''}"`,
+                `"${r.verdict || ''}"`,
+                `"${(r.details || '').replace(/"/g, '""')}"`,
+                `"${r.history_match?.amount || ''}"`,
+                `"${r.history_match?.time || ''}"`,
+                `"${r.history_match?.ref || ''}"`
+            ]
+            rows.push(row.join(","))
+        })
+
+        const csvContent = "data:text/csv;charset=utf-8," + rows.join("\n")
+        const encodedUri = encodeURI(csvContent)
+        const link = document.createElement("a")
+        link.setAttribute("href", encodedUri)
+        link.setAttribute("download", "verification_report.csv")
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+    }
+
     return (
         <div className="container" style={{ paddingTop: '2rem' }}>
 
@@ -158,7 +194,12 @@ export default function VerificationWorkspace() {
                             Select multiple receipt screenshots or an entire folder containing the images.
                         </p>
 
-                        <label className="file-upload-zone">
+                        <label
+                            className={clsx("file-upload-zone", isDraggingReceipts && "dropzone-active")}
+                            onDragOver={(e) => { e.preventDefault(); setIsDraggingReceipts(true) }}
+                            onDragLeave={(e) => { e.preventDefault(); setIsDraggingReceipts(false) }}
+                            onDrop={(e) => { e.preventDefault(); handleReceiptsUpload(e) }}
+                        >
                             <input
                                 type="file"
                                 multiple
@@ -241,7 +282,13 @@ export default function VerificationWorkspace() {
                             </div>
                         </div>
 
-                        <label className="file-upload-zone" style={{ minHeight: '200px' }}>
+                        <label
+                            className={clsx("file-upload-zone", isDraggingHistory && "dropzone-active")}
+                            style={{ minHeight: '200px' }}
+                            onDragOver={(e) => { e.preventDefault(); setIsDraggingHistory(true) }}
+                            onDragLeave={(e) => { e.preventDefault(); setIsDraggingHistory(false) }}
+                            onDrop={(e) => { e.preventDefault(); handleHistoryUpload(e) }}
+                        >
                             <input
                                 type="file"
                                 accept="application/pdf, video/*"
@@ -335,8 +382,26 @@ export default function VerificationWorkspace() {
                             </div>
                         </div>
 
-                        {/* Review Table (Simplified display of mismatches) */}
-                        <h3 style={{ marginBottom: '1rem' }}>Mismatches & Unverified</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                            <h3 style={{ margin: 0 }}>Results Details</h3>
+                            <button className="btn btn-secondary btn-sm" onClick={downloadCSV} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', padding: '0.5rem 1rem' }}>
+                                <Download size={16} /> Export CSV
+                            </button>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                            {['all', 'matched', 'mismatch', 'not_found'].map(type => (
+                                <button
+                                    key={type}
+                                    className={clsx("btn btn-sm", filterType === type ? "btn-primary" : "btn-secondary")}
+                                    onClick={() => setFilterType(type)}
+                                    style={{ textTransform: 'capitalize', borderRadius: '100px', fontSize: '0.875rem', padding: '0.25rem 1rem' }}
+                                >
+                                    {type.replace('_', ' ')}
+                                </button>
+                            ))}
+                        </div>
+
                         <div className="results-table-container">
                             <table className="results-table">
                                 <thead>
@@ -348,23 +413,24 @@ export default function VerificationWorkspace() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* Filtering out perfectly matched receipts to show issues only */}
-                                    {verificationResults?.results?.filter(r => r.verdict !== 'matched').map((report, idx) => (
+                                    {verificationResults?.results?.filter(r => filterType === 'all' || r.verdict === filterType).map((report, idx) => (
                                         <tr key={idx}>
-                                            <td style={{ fontWeight: 500 }}>{report.filename || 'Unknown'}</td>
-                                            <td>{report.receipt?.amount || 'N/A'}</td>
+                                            <td style={{ fontWeight: 500, maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={report.filename}>{report.filename || 'Unknown'}</td>
+                                            <td>{report.receipt?.amount ? `₱${report.receipt.amount}` : 'N/A'}</td>
                                             <td>
-                                                <span className={clsx("badge", report.verdict === 'mismatch' ? 'badge-error' : 'badge-warning')}>
+                                                <span className={clsx("badge", report.verdict === 'mismatch' ? 'badge-error' : report.verdict === 'matched' ? 'badge-success' : 'badge-warning')}>
                                                     {report.verdict}
                                                 </span>
                                             </td>
-                                            <td className="text-subtitle" style={{ fontSize: '0.875rem' }}>{report.details || 'Needs manual review'}</td>
+                                            <td className="text-subtitle" style={{ fontSize: '0.875rem', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={report.details}>
+                                                {report.details || (report.verdict === 'matched' ? 'Perfect match' : 'Needs manual review')}
+                                            </td>
                                         </tr>
                                     ))}
-                                    {(!verificationResults?.results || verificationResults?.results.filter(r => r.verdict !== 'matched').length === 0) && (
+                                    {(!verificationResults?.results || verificationResults?.results.filter(r => filterType === 'all' || r.verdict === filterType).length === 0) && (
                                         <tr>
                                             <td colSpan="4" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
-                                                No mismatches found! Everything looks perfect.
+                                                No receipts found for this filter.
                                             </td>
                                         </tr>
                                     )}
