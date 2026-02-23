@@ -14,6 +14,7 @@ export default function VerificationWorkspace() {
     // Step 2 & 3 State
     const [parsedResults, setParsedResults] = useState(null)
     const [isParsing, setIsParsing] = useState(false)
+    const [parseProgress, setParseProgress] = useState(0)
 
     // Step 4 State
     const [historyFile, setHistoryFile] = useState(null)
@@ -36,24 +37,69 @@ export default function VerificationWorkspace() {
     const parseReceipts = async () => {
         if (receiptFiles.length === 0) return
         setIsParsing(true)
+        setParseProgress(0)
 
         try {
-            const formData = new FormData()
-            receiptFiles.forEach(file => {
-                formData.append('files', file)
-            })
+            let allResults = []
+            let totalSuccessful = 0
+            let processedBatches = 0
 
-            const response = await axios.post(`${API_BASE_URL}/parse-receipts`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+            const batches = []
+            let currentBatch = []
+            receiptFiles.forEach((file) => {
+                currentBatch.push(file)
+                if (currentBatch.length >= 5) {
+                    batches.push(currentBatch)
+                    currentBatch = []
+                }
             })
+            if (currentBatch.length > 0) batches.push(currentBatch)
 
-            setParsedResults(response.data)
+            let currentIndex = 0
+
+            async function worker() {
+                while (currentIndex < batches.length) {
+                    const index = currentIndex++
+                    const batch = batches[index]
+
+                    const formData = new FormData()
+                    batch.forEach(file => formData.append('files', file))
+
+                    try {
+                        const response = await axios.post(`${API_BASE_URL}/parse-receipts`, formData, {
+                            headers: { 'Content-Type': 'multipart/form-data' }
+                        })
+                        if (response.data && response.data.results) {
+                            allResults.push(...response.data.results)
+                            totalSuccessful += response.data.successful || response.data.results.length
+                        }
+                    } catch (err) {
+                        console.error('Batch error:', err)
+                    } finally {
+                        processedBatches++
+                        setParseProgress(Math.round((processedBatches / batches.length) * 100))
+                    }
+                }
+            }
+
+            const workers = []
+            for (let i = 0; i < Math.min(10, batches.length); i++) {
+                workers.push(worker())
+            }
+            await Promise.all(workers)
+
+            setParsedResults({
+                total: receiptFiles.length,
+                successful: totalSuccessful,
+                results: allResults
+            })
             setCurrentStep(3) // Move to history upload step
         } catch (error) {
             console.error('Error parsing receipts:', error)
-            alert('Failed to parse receipts. ' + (error.response?.data?.detail || error.message))
+            alert('Failed to parse receipts. ' + (error.message))
         } finally {
             setIsParsing(false)
+            setParseProgress(0)
         }
     }
 
@@ -167,7 +213,7 @@ export default function VerificationWorkspace() {
                             disabled={receiptFiles.length === 0 || isParsing}
                         >
                             {isParsing ? (
-                                <><Loader2 className="spinner" /> Parsing {receiptFiles.length} receipts...</>
+                                <><Loader2 className="spinner" /> Parsing {receiptFiles.length} receipts... ({parseProgress}%)</>
                             ) : (
                                 <>Next Step <BadgeCheck size={18} /></>
                             )}
