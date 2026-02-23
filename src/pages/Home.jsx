@@ -26,7 +26,7 @@ export default function Home() {
                 </h1>
 
                 <p className="text-subtitle" style={{ fontSize: '1.25rem', marginBottom: '3rem', maxWidth: '650px', lineHeight: '1.6' }}>
-                    The fastest, most secure way for Ateneo organizations to verify GCash, Maya, and BDO payments. Say goodbye to manual cross-checking and human error.
+                    A fast, straightforward payment verification tool for Ateneo student orgs. No more manual cross-checking of GCash or bank screenshots against your transaction history.
                 </p>
 
                 <div style={{ display: 'flex', gap: '1rem', marginBottom: '4rem' }}>
@@ -41,16 +41,16 @@ export default function Home() {
                 {/* Quick Stats / Trust Indicators */}
                 <div className="delay-100 animate-fade-in" style={{ display: 'flex', gap: '3rem', justifyContent: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '2rem', width: '100%' }}>
                     <div>
-                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--text-primary)' }}>100x</div>
-                        <div className="text-subtitle" style={{ fontSize: '0.875rem' }}>Faster than manual</div>
+                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--text-primary)' }}>Save Hours</div>
+                        <div className="text-subtitle" style={{ fontSize: '0.875rem' }}>Stop checking spreadsheets manually</div>
                     </div>
                     <div>
-                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--text-primary)' }}>100%</div>
-                        <div className="text-subtitle" style={{ fontSize: '0.875rem' }}>Automated matching</div>
+                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--text-primary)' }}>Bulk Process</div>
+                        <div className="text-subtitle" style={{ fontSize: '0.875rem' }}>Check hundreds of receipts instantly</div>
                     </div>
                     <div>
-                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--text-primary)' }}>0 Data</div>
-                        <div className="text-subtitle" style={{ fontSize: '0.875rem' }}>Stored on our servers</div>
+                        <div style={{ fontSize: '2rem', fontWeight: '700', color: 'var(--text-primary)' }}>Privacy First</div>
+                        <div className="text-subtitle" style={{ fontSize: '0.875rem' }}>Files are discarded after verification</div>
                     </div>
                 </div>
             </div>
@@ -58,9 +58,9 @@ export default function Home() {
             {/* Detailed How It Works Section */}
             <div id="how-it-works" style={{ paddingTop: '6rem', paddingBottom: '6rem', borderTop: '1px solid var(--border-subtle)' }}>
                 <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                    <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>How PayShield Works</h2>
+                    <h2 style={{ fontSize: '3rem', marginBottom: '1rem' }}>How Pop Portal Works</h2>
                     <p className="text-subtitle" style={{ maxWidth: '600px', margin: '0 auto' }}>
-                        A simple, powerful 3-step process to verify hundreds of transactions in seconds.
+                        Verify your organization's payments in three simple steps.
                     </p>
                 </div>
 
@@ -73,7 +73,7 @@ export default function Home() {
                         <div>
                             <h3 style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>1. Upload Receipt Screenshots</h3>
                             <p className="text-subtitle">
-                                Gather all the GCash, Maya, or BDO receipt screenshots submitted by your members or customers. You can drag and drop an entire folder directly into the workspace. Our OCR backend will instantly extract the Reference IDs, Amounts, and Dates using advanced Vision AI.
+                                Collect your payment screenshots from Google Forms or your members. Drag and drop the whole folder directly into the workspace, and the system will instantly extract the amounts and reference numbers.
                             </p>
                         </div>
                     </div>
@@ -86,7 +86,7 @@ export default function Home() {
                         <div style={{ textAlign: 'right' }}>
                             <h3 style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>2. Provide Official Transaction History</h3>
                             <p className="text-subtitle">
-                                Download the official PDF transaction history from your organization's GCash or Maya app. Upload this PDF to the workspace. This acts as the source of truth to verify the uploaded screenshots against.
+                                Export your official transaction history PDF from your org's GCash, Maya, or bank account. Upload it to the workspace to act as the source of truth for verification.
                             </p>
                         </div>
                     </div>
@@ -99,7 +99,7 @@ export default function Home() {
                         <div>
                             <h3 style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>3. Instant Verification & Mismatch Report</h3>
                             <p className="text-subtitle">
-                                PayShield automatically cross-references the extracted receipt data with the official PDF history. In seconds, you get a clean report showing exactly how many payments are verified, and a list of any forged, duplicate, or mismatched receipts that require manual review.
+                                The system instantly cross-references the student screenshots with your official PDF history. It generates a clean report showing which payments are verified and a list of any forged, duplicate, or mismatched receipts that need double-checking.
                             </p>
                         </div>
                     </div>
@@ -115,7 +115,7 @@ export default function Home() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div className="glass-panel" style={{ padding: '2rem' }}>
                         <h4 style={{ fontSize: '1.125rem', marginBottom: '0.5rem' }}>Is my data secure?</h4>
-                        <p className="text-subtitle" style={{ fontSize: '0.95rem' }}>Yes. The extraction and verification happen entirely in memory on our fast backend. We do not store your receipt photos, and we do not save your transaction history PDF. Once the request is finished, all data is immediately discarded.</p>
+                        <p className="text-subtitle" style={{ fontSize: '0.95rem' }}>Yes. Verification happens in-memory on the backend. We don't save any receipt photos or transaction history files after you close the page.</p>
                     </div>
 
                     <div className="glass-panel" style={{ padding: '2rem' }}>
@@ -125,7 +125,7 @@ export default function Home() {
 
                     <div className="glass-panel" style={{ padding: '2rem' }}>
                         <h4 style={{ fontSize: '1.125rem', marginBottom: '0.5rem' }}>What happens if a receipt doesn't match?</h4>
-                        <p className="text-subtitle" style={{ fontSize: '0.95rem' }}>If a receipt amounts don't match, or the transaction ID cannot be found in the PDF, it will be flagged as a "Mismatch" in the final results table. You will see the exact filename and reason, allowing your finance team to manually investigate that specific submission.</p>
+                        <p className="text-subtitle" style={{ fontSize: '0.95rem' }}>If an amount or reference number doesn't fully match your PDF history, it will be flagged as a 'Mismatch' or 'Not Found' in the final report. You'll see the exact file name and the reason so your finance team can investigate.</p>
                     </div>
                 </div>
             </div>

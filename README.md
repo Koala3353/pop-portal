@@ -1,16 +1,59 @@
-# React + Vite
+# Pop Portal (PayShield)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fast, secure, and automated payment verification system built for student organizations at Ateneo to cross-check GCash, Maya, and BDO receipt screenshots against official transaction history.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Automated Matching:** Instantly cross-references uploaded receipt screenshots with your official transaction history.
+- **Batch Processing:** Upload hundreds of receipts at once using drag-and-drop or folder upload.
+- **Detailed Reporting:** Generates a comprehensive breakdown of matched, mismatched, and missing transactions.
+- **CSV Export:** Download verification results as a CSV file for easy record-keeping and accounting.
+- **Privacy-First:** All extraction and verification happens in-memory. Receipts and transaction history data are not stored on our servers.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- **Frontend:** React, Vite, CSS Modules (Glassmorphism UI)
+- **Backend/API:** Python, FastAPI (Hosted on Vercel)
+- **OCR/Vision:** Advanced Vision AI for accurate text extraction from receipts
+- **Icons:** Lucide React
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+- Node.js (v18+ recommended)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Koala3353/pop-portal.git
+   cd pop-portal
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+### Deployment
+
+To deploy the frontend to GitHub Pages:
+```bash
+npm run deploy
+```
+
+## How It Works
+
+1. **Upload Receipts:** Gather GCash, Maya, or BDO payment screenshots from your members or customers. Upload them in bulk to the workspace.
+2. **Upload Transaction History:** Export your official transaction history (PDF) from your e-wallet or bank app and drop it into the workspace.
+3. **Verify:** The system automatically extracts data from the screenshots and matches them against the official history, highlighting any discrepancies or unverified payments.
+
+## License
+
+MIT License
