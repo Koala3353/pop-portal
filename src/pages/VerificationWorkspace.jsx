@@ -82,8 +82,10 @@ export default function VerificationWorkspace() {
                     } catch (err) {
                         console.error('Batch error:', err)
                     } finally {
-                        processedBatches++
-                        setParseProgress(Math.round((processedBatches / batches.length) * 100))
+                        setParseProgress(prev => {
+                            const newProgress = prev + (1 / batches.length) * 100
+                            return Math.min(Math.round(newProgress), 100)
+                        })
                     }
                 }
             }
