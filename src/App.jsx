@@ -10,10 +10,10 @@ function App() {
         <div className="container">
           <Link to="/" className="nav-brand text-gradient">
             <ShieldCheck size={28} />
-            <span>PayShield</span>
+            <span>Pop Portal</span>
           </Link>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <a href="https://pop-mr3f5gr9i-keenes-projects-d1636aaf.vercel.app/docs#/" target="_blank" rel="noreferrer" className="btn btn-secondary">
+            <a href="https://pop-api-mocha.vercel.app/docs" target="_blank" rel="noreferrer" className="btn btn-secondary">
               API Docs
             </a>
             <Link to="/workspace" className="btn btn-primary">
